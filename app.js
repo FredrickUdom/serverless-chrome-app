@@ -13,10 +13,10 @@ dotenv.config();
 
 const TABLE_NAME = "PostsTableNew";
 
-// Create a new post
+
 const createPost = async (post) => {
   try {
-    // Ensure post is an object
+    
     let body = typeof post === "string" ? JSON.parse(post) : post;
 
     const rating = body.rating;
@@ -51,7 +51,6 @@ const createPost = async (post) => {
 
     await db.send(new PutItemCommand(params));
 
-    // Fetch the newly created item to return it in the response
     const getParams = {
       TableName: TABLE_NAME,
       Key: marshall({ id }),
@@ -59,7 +58,6 @@ const createPost = async (post) => {
 
     const { Item } = await db.send(new GetItemCommand(getParams));
 
-    // Unmarshall the DynamoDB item to a plain JavaScript object
     // const unmarshalledItem = unmarshall(Item);
 
     return {
@@ -79,7 +77,6 @@ const createPost = async (post) => {
   }
 };
 
-// Get all posts with pagination support
 const getAllPosts = async () => {
   const params = {
     TableName: TABLE_NAME,
@@ -100,7 +97,7 @@ const getPostById = async (id) => {
   return result.Item;
 };
 
-// Update a post by ID
+
 const updatePostById = async (id, updatedPost) => {
   const params = {
     TableName: TABLE_NAME,
@@ -121,7 +118,7 @@ const updatePostById = async (id, updatedPost) => {
   return result.Attributes;
 };
 
-// Delete a post by ID
+
 const deletePostById = async (id) => {
   const params = {
     TableName: TABLE_NAME,

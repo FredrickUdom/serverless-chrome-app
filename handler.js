@@ -6,13 +6,12 @@ const {
   deletePostById,
 } = require("./app");
 
-// Helper function to format API responses
+
 const formatResponse = (statusCode, body) => ({
   statusCode,
   body: JSON.stringify(body),
 });
 
-// Create a new post
 exports.createPost = async (event) => {
   try {
     const post = JSON.parse(event.body);
@@ -23,7 +22,6 @@ exports.createPost = async (event) => {
   }
 };
 
-// Get all posts
 exports.getAllPosts = async () => {
   try {
     const posts = await getAllPosts();
@@ -33,7 +31,6 @@ exports.getAllPosts = async () => {
   }
 };
 
-// Get a post by ID
 exports.getPostById = async (event) => {
   try {
     const id = event.pathParameters.id;
@@ -47,7 +44,6 @@ exports.getPostById = async (event) => {
   }
 };
 
-// Update a post by ID
 exports.updatePostById = async (event) => {
   try {
     const id = event.pathParameters.id;
@@ -59,7 +55,6 @@ exports.updatePostById = async (event) => {
   }
 };
 
-// Delete a post by ID
 exports.deletePostById = async (event) => {
   try {
     const id = event.pathParameters.id;
