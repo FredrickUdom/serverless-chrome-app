@@ -86,7 +86,7 @@ const getAllPosts = async () => {
   return result.Items;
 };
 
-// Get a post by ID
+
 const getPostById = async (id) => {
   const params = {
     TableName: TABLE_NAME,
@@ -100,7 +100,7 @@ const getPostById = async (id) => {
 
 const updatePostById = async (event) => {
   try {
-    // Parse the request body
+    
     const postId = event.pathParameters?.id;
     if (!postId) {
       throw new Error("Post ID is required");
@@ -108,7 +108,7 @@ const updatePostById = async (event) => {
 
     let body = typeof event.body === "string" ? JSON.parse(event.body) : event.body;
 
-    // Check if post exists
+   
     const getParams = {
       TableName: TABLE_NAME,
       Key: marshall({ id: postId }),
@@ -125,14 +125,14 @@ const updatePostById = async (event) => {
       };
     }
 
-    // Validate rating
+
     if (body.rating !== undefined) {
       if (body.rating < 1 || body.rating > 5) {
         throw new Error("Rating must be a number between 1 and 5.");
       }
     }
 
-    // Validate predefinedAnswers if present
+    
     if (body.predefinedAnswers !== undefined) {
       if (!Array.isArray(body.predefinedAnswers)) {
         throw new Error("predefinedAnswers must be an array");
@@ -145,15 +145,14 @@ const updatePostById = async (event) => {
       });
     }
 
-    // Get the existing item and merge with updates
     const existingItem = unmarshall(Item);
     
-    // Prepare update expression
+
     const updateExpression = [];
     const expressionAttributeNames = {};
     const expressionAttributeValues = {};
     
-    // Update fields only if they are provided in the request
+   
     if (body.rating !== undefined) {
       updateExpression.push("#rating = :rating");
       expressionAttributeNames["#rating"] = "rating";
@@ -172,13 +171,13 @@ const updatePostById = async (event) => {
       expressionAttributeValues[":predefinedAnswers"] = body.predefinedAnswers;
     }
     
-    // Add updatedAt timestamp
+   
     updateExpression.push("#updatedAt = :updatedAt");
     expressionAttributeNames["#updatedAt"] = "updatedAt";
     expressionAttributeValues[":updatedAt"] = new Date().toISOString();
     
-    // If no fields to update, return early
-    if (updateExpression.length === 1) { // Only updatedAt
+    
+    if (updateExpression.length === 1) { 
       return {
         statusCode: 400,
         body: JSON.stringify({
@@ -187,7 +186,7 @@ const updatePostById = async (event) => {
       };
     }
 
-    // Perform the update
+   
     const params = {
       TableName: TABLE_NAME,
       Key: marshall({ id: postId }),
