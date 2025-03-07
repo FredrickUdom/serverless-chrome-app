@@ -46,9 +46,9 @@ exports.getPostById = async (event) => {
 
 exports.updatePostById = async (event) => {
   try {
-    const id = event.pathParameters.id;
+    const id = event.pathParameters?.id;
     const updatedPost = JSON.parse(event.body);
-    const result = await updatePostById(id, updatedPost);
+    const result = await updatePostById({ pathParameters: { id }, body: updatedPost });
     return formatResponse(200, result);
   } catch (error) {
     return formatResponse(500, { error: error.message });
