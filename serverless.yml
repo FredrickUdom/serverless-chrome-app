@@ -5,6 +5,7 @@ service: serverless-chrome-app-role
 plugins:
   - serverless-iam-roles-per-function
   - serverless-dotenv-plugin
+  - serverless-offline 
 
 provider:
   name: aws
