@@ -1,0 +1,184 @@
+org: freddykodes
+app: chrome-serverless-app-api
+service: serverless-chrome-app-role
+useDotenv: true 
+
+plugins:
+  - serverless-iam-roles-per-function
+  - serverless-dotenv-plugin
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  httpApi:
+    useProviderTags: true
+    cors: true
+  environment:
+    DYNAMODB_FEEDBACK_TABLE: ${env:DYNAMODB_FEEDBACK_TABLE} 
+    DYNAMODB_APPINFO_TABLE: ${env:DYNAMODB_APPINFO_TABLE} 
+
+custom:
+  serverless-iam-roles-per-function:
+    defaultInherit: true
+
+functions:
+  createPost:
+    handler: src/handler.createPost
+    timeout: 30
+    events:
+      - httpApi:
+          path: /posts
+          method: POST
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+          - dynamodb:GetItem
+        Resource: !GetAtt MyDynamoDBTable.Arn
+
+  getAllPosts:
+    handler: src/handler.getAllPosts
+    timeout: 30
+    events:
+      - httpApi:
+          path: /posts
+          method: GET
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Scan
+        Resource: !GetAtt MyDynamoDBTable.Arn
+
+  getPostById:
+    handler: src/handler.getPostById
+    timeout: 30
+    events:
+      - httpApi:
+          path: /posts/{id}
+          method: GET
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:GetItem
+        Resource: !GetAtt MyDynamoDBTable.Arn
+
+  updatePostById:
+    handler: src/handler.updatePostById
+    timeout: 30
+    events:
+      - httpApi:
+          path: /posts/{id}
+          method: PUT
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: !GetAtt MyDynamoDBTable.Arn
+
+  deletePostById:
+    handler: src/handler.deletePostById
+    timeout: 30
+    events:
+      - httpApi:
+          path: /posts/{id}
+          method: DELETE
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:DeleteItem
+        Resource: !GetAtt MyDynamoDBTable.Arn
+
+  createAppInfo:
+    handler: src/handler.createAppInfo
+    timeout: 30
+    events:
+      - httpApi:
+          path: /app-info
+          method: POST
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+        Resource: !GetAtt AppInfoTable.Arn
+
+  getAllAppInfo:
+    handler: src/handler.getAllAppInfo
+    timeout: 30
+    events:
+      - httpApi:
+          path: /app-info
+          method: GET
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Scan
+        Resource: !GetAtt AppInfoTable.Arn
+
+  getAppInfoById:
+    handler: src/handler.getAppInfoById
+    timeout: 30
+    events:
+      - httpApi:
+          path: /app-info/{id}
+          method: GET
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:GetItem
+        Resource: !GetAtt AppInfoTable.Arn
+
+  updateAppInfoById:
+    handler: src/handler.updateAppInfoById
+    timeout: 30
+    events:
+      - httpApi:
+          path: /app-info/{id}
+          method: PUT
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: !GetAtt AppInfoTable.Arn
+
+  deleteAppInfoById:
+    handler: src/handler.deleteAppInfoById
+    timeout: 30
+    events:
+      - httpApi:
+          path: /app-info/{id}
+          method: DELETE
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:DeleteItem
+        Resource: !GetAtt AppInfoTable.Arn
+
+resources:
+  Resources:
+    MyDynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${env:DYNAMODB_FEEDBACK_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    AppInfoTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${env:DYNAMODB_APPINFO_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 1
