@@ -106,7 +106,6 @@ const updatePostById = async (event) => {
 
     let body = typeof event.body === "string" ? JSON.parse(event.body) : event.body;
 
-
     const getParams = {
       TableName: TABLE_NAME,
       Key: marshall({ id: postId }),
