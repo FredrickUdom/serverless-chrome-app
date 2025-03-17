@@ -1,6 +1,7 @@
 org: freddykodes
 app: chrome-serverless-app-api
 service: serverless-chrome-app-role
+useDotenv: true 
 
 plugins:
   - serverless-iam-roles-per-function
@@ -16,6 +17,7 @@ provider:
   environment:
     DYNAMODB_FEEDBACK_TABLE: ${env:DYNAMODB_FEEDBACK_TABLE}
     DYNAMODB_APPINFO_TABLE: ${env:DYNAMODB_APPINFO_TABLE}
+    AWS_ROLE_ARN: ${env:AWS_ROLE_ARN}
   iam:
     role:
       statements:
